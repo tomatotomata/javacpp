@@ -441,6 +441,9 @@ public class Parser {
                                       +  "    public " + removeAnnotations(valueType.javaName) + " back() { return get(size() - 1); }\n";
                         }
                         decl.text += "    @Index" + indexFunction + " public native " + valueType.annotations + valueType.javaName + " get(" + params + ");\n";
+                        if (dim == 1 && indexType.javaName.equals("long") && !constant) {
+                            decl.text += "    @Name(\"operator[]\") public native @ByVal " + removeAnnotations(valueType.javaName) + " getValue(long i);\n";
+                        }
                         if (!constant) {
                             decl.text += "    public native " + containerType.javaName + " put(" + params + separator + removeAnnotations(valueType.javaName) + " value);\n";
                         }
@@ -586,7 +589,7 @@ public class Parser {
                             if (first) {
                                 decl.text += "    public " + javaName + " pop_back() {\n"
                                           +  "        long size = size();\n"
-                                          +  "        " + javaName + " value = get(size - 1);\n"
+                                          +  "        " + javaName + " value = getValue(size - 1);\n"
                                           +  "        resize(size - 1);\n"
                                           +  "        return value;\n"
                                           +  "    }\n";
