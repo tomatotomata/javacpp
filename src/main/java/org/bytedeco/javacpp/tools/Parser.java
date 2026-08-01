@@ -584,9 +584,15 @@ public class Parser {
                         decl.text += "\n";
                         if (dim < 2) {
                             if (first) {
+                                boolean byReference = valueType.annotations.contains("@ByRef ");
+                                if (byReference) {
+                                    String byValueAnnotations = valueType.annotations.replace("@ByRef ", "@ByVal ");
+                                    decl.text += "    // Copy the element before resize() destroys the storage it occupied.\n";
+                                    decl.text += "    @Index" + indexFunction + " private native " + byValueAnnotations + javaName + " getByVal(" + params + ");\n";
+                                }
                                 decl.text += "    public " + javaName + " pop_back() {\n"
                                           +  "        long size = size();\n"
-                                          +  "        " + javaName + " value = get(size - 1);\n"
+                                          +  "        " + javaName + " value = " + (byReference ? "getByVal" : "get") + "(size - 1);\n"
                                           +  "        resize(size - 1);\n"
                                           +  "        return value;\n"
                                           +  "    }\n";
