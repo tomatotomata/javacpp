@@ -586,13 +586,15 @@ public class Parser {
                             if (first) {
                                 boolean byReference = valueType.annotations.contains("@ByRef ");
                                 if (byReference) {
-                                    String byValueAnnotations = valueType.annotations.replace("@ByRef ", "@ByVal ");
-                                    decl.text += "    // Copy the element before resize() destroys the storage it occupied.\n";
-                                    decl.text += "    @Name(\"at\") @Index" + indexFunction + " private native " + byValueAnnotations + javaName + " getByVal(" + params + ");\n";
+                                    // Mark the accessor as an rvalue reference so Generator emits
+                                    // std::move() before resize() destroys the element's storage.
+                                    String byMoveAnnotations = valueType.annotations.replace("@ByRef ", "@ByRef(true) ");
+                                    decl.text += "    // Move the element before resize() destroys the storage it occupied.\n";
+                                    decl.text += "    @Name(\"at\") @Index" + indexFunction + " private native " + byMoveAnnotations + javaName + " getByMove(" + params + ");\n";
                                 }
                                 decl.text += "    public " + javaName + " pop_back() {\n"
                                           +  "        long size = size();\n"
-                                          +  "        " + javaName + " value = " + (byReference ? "getByVal" : "get") + "(size - 1);\n"
+                                          +  "        " + javaName + " value = " + (byReference ? "getByMove" : "get") + "(size - 1);\n"
                                           +  "        resize(size - 1);\n"
                                           +  "        return value;\n"
                                           +  "    }\n";
