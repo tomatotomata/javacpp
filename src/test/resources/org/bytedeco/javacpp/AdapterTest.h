@@ -143,6 +143,25 @@ void putMovedData(MovedData&& m) {
     movedData = m;
 }
 
+struct MoveOnlyData {
+    int data;
+    explicit MoveOnlyData(int data) : data(data) { }
+    MoveOnlyData(const MoveOnlyData&) = delete;
+    MoveOnlyData& operator=(const MoveOnlyData&) = delete;
+    MoveOnlyData(MoveOnlyData&& other) noexcept : data(other.data) { other.data = 0; }
+    MoveOnlyData& operator=(MoveOnlyData&& other) noexcept {
+        data = other.data;
+        other.data = 0;
+        return *this;
+    }
+};
+
+MoveOnlyData moveOnlyData(13);
+MoveOnlyData&& getMoveOnlyData() {
+    moveOnlyData.data = 13;
+    return std::move(moveOnlyData);
+}
+
 std::optional<int> testOptionalInt(std::optional<int> o) {
     return o;
 }

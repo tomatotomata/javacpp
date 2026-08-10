@@ -126,6 +126,13 @@ public class AdapterTest {
     static native @StdMove MovedData getMovedData();
     static native void putMovedData(@StdMove MovedData m);
 
+    static class MoveOnlyData extends Pointer {
+        MoveOnlyData(Pointer p) { super(p); }
+        native int data();
+    }
+
+    static native @ByRef(true) MoveOnlyData getMoveOnlyData();
+
     static native @Optional IntPointer testOptionalInt(@Optional IntPointer o);
 
     static class SharedFunction extends FunctionPointer {
@@ -395,6 +402,14 @@ public class AdapterTest {
         assertNotNull(m2.deallocator());
         m.deallocate();
         m2.deallocate();
+    }
+
+    @Test public void testByRefMove() {
+        System.out.println("ByRefMove");
+        MoveOnlyData m = getMoveOnlyData();
+        assertEquals(13, m.data());
+        assertNotNull(m.deallocator());
+        m.deallocate();
     }
 
     @Test public void testOptional() {
