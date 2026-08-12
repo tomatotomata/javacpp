@@ -144,21 +144,22 @@ void putMovedData(MovedData&& m) {
 }
 
 struct MoveOnlyData {
-    int data;
-    explicit MoveOnlyData(int data) : data(data) { }
+    int value;
+    explicit MoveOnlyData(int value) : value(value) { }
     MoveOnlyData(const MoveOnlyData&) = delete;
     MoveOnlyData& operator=(const MoveOnlyData&) = delete;
-    MoveOnlyData(MoveOnlyData&& other) noexcept : data(other.data) { other.data = 0; }
+    MoveOnlyData(MoveOnlyData&& other) noexcept : value(other.value) { other.value = 0; }
     MoveOnlyData& operator=(MoveOnlyData&& other) noexcept {
-        data = other.data;
-        other.data = 0;
+        value = other.value;
+        other.value = 0;
         return *this;
     }
+    int data() const { return value; }
 };
 
 MoveOnlyData moveOnlyData(13);
 MoveOnlyData&& getMoveOnlyData() {
-    moveOnlyData.data = 13;
+    moveOnlyData.value = 13;
     return std::move(moveOnlyData);
 }
 
