@@ -2983,6 +2983,7 @@ public class Generator {
                     }
                     needInit = true;
                 } else if (returnBy instanceof ByVal ||
+                        (returnBy instanceof ByRef && ((ByRef)returnBy).value()) ||
                         FunctionPointer.class.isAssignableFrom(methodInfo.returnType)) {
                     out.println(indent + "jlong rcapacity = 1;");
                     out.println(indent + "void* rowner = (void*)rptr;");
