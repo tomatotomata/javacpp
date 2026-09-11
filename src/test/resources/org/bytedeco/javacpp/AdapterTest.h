@@ -163,6 +163,14 @@ MoveOnlyData&& getMoveOnlyData() {
     return std::move(moveOnlyData);
 }
 
+std::vector<MoveOnlyData> moveOnlyDataVector;
+std::vector<MoveOnlyData>& getMoveOnlyDataVector() {
+    moveOnlyDataVector.clear();
+    moveOnlyDataVector.emplace_back(17);
+    moveOnlyDataVector.emplace_back(23);
+    return moveOnlyDataVector;
+}
+
 std::optional<int> testOptionalInt(std::optional<int> o) {
     return o;
 }
